@@ -1,0 +1,22 @@
+{
+  "name": "aws-go-lambda-cdk-template",
+  "version": "1.0.0",
+  "description": "Production-ready Go Lambda template with CDK",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy"
+  },
+  "devDependencies": {
+    "@types/node": "18.x",
+    "aws-cdk": "2.x",
+    "typescript": "~5.0.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.x",
+    "@aws-cdk/aws-lambda-go-alpha": "latest",
+    "constructs": "^10.0.0"
+  }
+}
